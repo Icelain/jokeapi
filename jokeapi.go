@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
-	"fmt"
 )
 
 const baseURL="https://sv443.net/jokeapi/v2/joke/"
