@@ -4,9 +4,16 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
+	"strings"
 )
 
-const baseURL="https://sv443.net/jokeapi/v2/joke/"
+var baseURL string="https://sv443.net/jokeapi/v2/joke/"
+
+type Params struct{
+	Categories *[]string
+	Blacklist *[]string
+	JokeType *string
+}
 
 type JokesResp struct{
 	Error bool
@@ -24,46 +31,73 @@ type JokeAPI struct{
 	response map[string] interface{}
 
 }
-func (j *JokeAPI) Get() JokesResp{
+func (j *JokeAPI) Get(params Params) JokesResp{
 
-resp, err:= http.Get(baseURL+"Any")
-if err!=nil{
-	panic(err)
-}
+	var mainURL string=""
+	var isBlacklist bool=false
 
-info, err:= ioutil.ReadAll(resp.Body)
-if err!=nil{
-	panic(err)
-}
+//param handling begins here
+	if params.Categories !=nil{
+		mainURL = baseURL + strings.Join(*params.Categories,",")
+	} else{
+		mainURL = baseURL + "Any"
+	}
 
-json.Unmarshal(info, &j.response)
-flagInterface := j.response["flags"].(map[string]interface{})
+	if params.Blacklist!=nil{
+		isBlacklist=true
+		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*params.Blacklist,",")
+	}
 
-flags := map[string]bool{
-	"nsfw": flagInterface["nsfw"].(bool),
-	"religious": flagInterface["religious"].(bool),
-	"racist" : flagInterface["racist"].(bool),
-	"sexist": flagInterface["sexist"].(bool),
-	"political": flagInterface["political"].(bool),
-}
+	if params.JokeType !=nil{
+		if isBlacklist{
+		mainURL=mainURL +"&type="+ *params.JokeType
+	} else{
+		mainURL=mainURL +"?type="+ *params.JokeType
+	}
+	}
+	
+//param handling ends here
+	resp, err:= http.Get(mainURL)
+	if err!=nil{
+		panic(err)
+	}
 
-jo := []string{}
+	info, err:= ioutil.ReadAll(resp.Body)
+	if err!=nil{
+		panic(err)
+	}
 
-if j.response["type"].(string)=="single"{
-	jo = append(jo, j.response["joke"].(string))
+	json.Unmarshal(info, &j.response)
 
-} else {
-	jo = append(jo, j.response["setup"].(string), j.response["delivery"].(string))
-}
+	jo := []string{}
 
-return JokesResp{
-	Error : j.response["error"].(bool),
-	Category: j.response["category"].(string),
-	JokeType : j.response["type"].(string),
-	Joke : jo,
-	Flags : flags,
-	Id : j.response["id"].(float64),
-	Lang : j.response["lang"].(string),
-}
-}
+	if j.response["type"].(string)=="single"{
+		jo = append(jo, j.response["joke"].(string))
+
+	} else {
+		jo = append(jo, j.response["setup"].(string), j.response["delivery"].(string))
+	}
+
+	flagInterface := j.response["flags"].(map[string]interface{})
+
+	flags := map[string]bool{
+		"nsfw": flagInterface["nsfw"].(bool),
+		"religious": flagInterface["religious"].(bool),
+		"racist" : flagInterface["racist"].(bool),
+		"sexist": flagInterface["sexist"].(bool),
+		"political": flagInterface["political"].(bool),
+	}
+
+	
+
+	return JokesResp{
+		Error : j.response["error"].(bool),
+		Category: j.response["category"].(string),
+		JokeType : j.response["type"].(string),
+		Joke : jo,
+		Flags : flags,
+		Id : j.response["id"].(float64),
+		Lang : j.response["lang"].(string),
+	}
+	}
 
