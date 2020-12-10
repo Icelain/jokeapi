@@ -9,8 +9,8 @@ Basic Usage Without Parameters-
 import "github.com/icelain/jokeapi"
 
 func main(){
-  api := new(jokeapi.JokeAPI)
-  response := api.Get(jokeapi.Params{})
+  api := jokeapi.New()
+  response := api.Get()
 }
 ```
 Response Struct-
@@ -24,17 +24,6 @@ type JokesResp struct{
 	Id float64
 	Lang string
 }
-
-
-
-```
-Params struct-
-```go
-type Params struct{
-	Categories *[]string
-	Blacklist *[]string
-	JokeType *string
-}
 ```
 
 Usage with all parameters-
@@ -46,12 +35,13 @@ func main(){
   blacklist := []string{"nsfw"}
   ctgs := []string{"Programming","Dark"}
   
-  api := new(jokeapi.JokeAPI)
-  response := api.Get(jokeapi.Params{&ctgs, &blacklist, &jt})
+  api := jokeapi.New()
+  api.SetParams(&ctgs, &blacklist, &jt)
+  response := api.Get()
 }
 
 ```
 Usage without all parameters(requires other params to be declared as nil)-
 ```go
-jokeapi.Params{&ctgs, nil, nil}
+ api.SetParams(&ctgs,nil, nil)
 ```
