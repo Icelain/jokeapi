@@ -9,14 +9,12 @@ import (
 
 var baseURL string="https://sv443.net/jokeapi/v2/joke/"
 
-//Parameters to be accepted by a function
 type Params struct{
 	Categories *[]string
 	Blacklist *[]string
 	JokeType *string
 }
 
-//Response returned to the user
 type JokesResp struct{
 	Error bool
 	Category string
@@ -27,65 +25,63 @@ type JokesResp struct{
 	Lang string
 }
 
-//Main struct
+
 type JokeAPI struct{
 
-	response map[string] interface{}
+	ExportedParams Params
 
 }
-//Get function. Accepts a Params struct
-func (j *JokeAPI) Get(params Params) JokesResp{
+func (j *JokeAPI) Get() JokesResp{
+
+	var response map[string] interface{}
 
 	var mainURL string=""
 	var isBlacklist bool=false
 
 //param handling begins here
-	if params.Categories !=nil{
-		mainURL = baseURL + strings.Join(*params.Categories,",")
+	if j.ExportedParams.Categories !=nil{
+		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories,",")
 	} else{
 		mainURL = baseURL + "Any"
 	}
 
-	if params.Blacklist!=nil{
+	if j.ExportedParams.Blacklist!=nil{
 		isBlacklist=true
-		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*params.Blacklist,",")
+		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist,",")
 	}
 
-	if params.JokeType !=nil{
+	if j.ExportedParams.JokeType !=nil{
 		if isBlacklist{
-		mainURL=mainURL +"&type="+ *params.JokeType
+		mainURL=mainURL +"&type="+ *j.ExportedParams.JokeType
 	} else{
-		mainURL=mainURL +"?type="+ *params.JokeType
+		mainURL=mainURL +"?type="+ *j.ExportedParams.JokeType
 	}
 	}
 	
 //param handling ends here
-	//Sends request
 	resp, err:= http.Get(mainURL)
 	if err!=nil{
 		panic(err)
 	}
-	//Converts to readable bytecode
+
 	info, err:= ioutil.ReadAll(resp.Body)
 	if err!=nil{
 		panic(err)
 	}
-	//Unmarshalls json content to map[string] interface
-	json.Unmarshal(info, &j.response)
+
+	json.Unmarshal(info, &response)
 
 	jo := []string{}
-	
-	//Checks if joke type is single or twopart and saves to string slice accordingly
-	if j.response["type"].(string)=="single"{
-		jo = append(jo, j.response["joke"].(string))
+
+	if response["type"].(string)=="single"{
+		jo = append(jo, response["joke"].(string))
 
 	} else {
-		jo = append(jo, j.response["setup"].(string), j.response["delivery"].(string))
+		jo = append(jo, response["setup"].(string), response["delivery"].(string))
 	}
-	//Convert flags response to a map[string]interface type
-	flagInterface := j.response["flags"].(map[string]interface{})
-	
-	//Converts flagInterface to map[string] bool
+
+	flagInterface := response["flags"].(map[string]interface{})
+
 	flags := map[string]bool{
 		"nsfw": flagInterface["nsfw"].(bool),
 		"religious": flagInterface["religious"].(bool),
@@ -95,15 +91,30 @@ func (j *JokeAPI) Get(params Params) JokesResp{
 	}
 
 	
-	//Returns response
+
 	return JokesResp{
-		Error : j.response["error"].(bool),
-		Category: j.response["category"].(string),
-		JokeType : j.response["type"].(string),
+		Error : response["error"].(bool),
+		Category: response["category"].(string),
+		JokeType : response["type"].(string),
 		Joke : jo,
 		Flags : flags,
-		Id : j.response["id"].(float64),
-		Lang : j.response["lang"].(string),
+		Id : response["id"].(float64),
+		Lang : response["lang"].(string),
 	}
 	}
+
+//Sets parameters to JokeAPI struct instance
+func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *string){
+	
+	j.ExportedParams.Categories = ctgs
+	j.ExportedParams.Blacklist = blacklist
+	j.ExportedParams.JokeType = joketype
+	
+}
+
+// Generates instance of JokeAPI struct
+func New() JokeAPI{
+	jokeapi := JokeAPI{Params{}}
+	return jokeapi
+}	
 
