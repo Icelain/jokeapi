@@ -112,6 +112,25 @@ func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *strin
 	
 }
 
+func (j *JokeAPI) SetCategories(ctgs *[]string){
+
+	j.ExportedParams.Categories = ctgs
+
+}
+
+func (j *JokeAPI) SetBlacklist(b *[]string){
+
+	j.ExportedParams.Blacklist = b
+
+}
+
+func (j *JokeAPI) SetJokeType(s *string){
+
+	j.ExportedParams.JokeType = s
+
+}
+
+
 // Generates instance of JokeAPI struct
 func New() JokeAPI{
 	jokeapi := JokeAPI{Params{}}
