@@ -134,6 +134,6 @@ func (j *JokeAPI) SetJokeType(s *string){
 // Generates instance of JokeAPI struct
 func New() JokeAPI{
 	jokeapi := JokeAPI{Params{}}
-	return jokeapi
+	return &jokeapi
 }	
 
