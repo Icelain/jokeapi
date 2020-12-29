@@ -43,7 +43,7 @@ func main(){
 ```
 Usage without all parameters(requires other params to be declared as nil)-
 ```go
- api.SetParams(&ctgs,nil, nil)
+api.SetParams(&ctgs,nil, nil)
 ```
 Or-
 ```go
