@@ -37,7 +37,7 @@ func main(){
   
   api := jokeapi.New()
   api.SetParams(&ctgs, &blacklist, &jt)
-  response := api.Get()
+  response := api.Fetch()
 }
 
 ```
