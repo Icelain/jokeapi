@@ -10,7 +10,7 @@ import "github.com/icelain/jokeapi"
 
 func main(){
   api := jokeapi.New()
-  response := api.Get()
+  response := api.Fetch()
 }
 ```
 Response Struct-
