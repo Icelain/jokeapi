@@ -1,71 +1,69 @@
 package jokeapi
 
 import (
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"strings"
 )
 
-var baseURL string="https://sv443.net/jokeapi/v2/joke/"
+var baseURL string = "https://sv443.net/jokeapi/v2/joke/"
 
-type Params struct{
+type Params struct {
 	Categories *[]string
-	Blacklist *[]string
-	JokeType *string
+	Blacklist  *[]string
+	JokeType   *string
 }
 
-type JokesResp struct{
-	Error bool
+type JokesResp struct {
+	Error    bool
 	Category string
 	JokeType string
-	Joke []string
-	Flags map[string] bool
-	Id float64
-	Lang string
+	Joke     []string
+	Flags    map[string]bool
+	Id       float64
+	Lang     string
 }
 
-
-type JokeAPI struct{
-
+type JokeAPI struct {
 	ExportedParams Params
-
 }
-func (j *JokeAPI) Fetch() JokesResp{
 
-	var response map[string] interface{}
+func (j *JokeAPI) Fetch() JokesResp {
 
-	var mainURL string=""
-	var isBlacklist bool=false
+	var response map[string]interface{}
 
-//param handling begins here
-	if j.ExportedParams.Categories !=nil{
-		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories,",")
-	} else{
+	var mainURL string = ""
+	var isBlacklist bool = false
+
+	//param handling begins here
+	if j.ExportedParams.Categories != nil {
+		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories, ",")
+	} else {
 		mainURL = baseURL + "Any"
 	}
 
-	if j.ExportedParams.Blacklist!=nil{
-		isBlacklist=true
-		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist,",")
+	if j.ExportedParams.Blacklist != nil {
+		isBlacklist = true
+		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist, ",")
 	}
 
-	if j.ExportedParams.JokeType !=nil{
-		if isBlacklist{
-		mainURL=mainURL +"&type="+ *j.ExportedParams.JokeType
-	} else{
-		mainURL=mainURL +"?type="+ *j.ExportedParams.JokeType
+	if j.ExportedParams.JokeType != nil {
+		if isBlacklist {
+			mainURL = mainURL + "&type=" + *j.ExportedParams.JokeType
+		} else {
+			mainURL = mainURL + "?type=" + *j.ExportedParams.JokeType
+		}
 	}
-	}
-	
-//param handling ends here
-	resp, err:= http.Get(mainURL)
-	if err!=nil{
+
+	//param handling ends here
+	resp, err := http.Get(mainURL)
+	if err != nil {
 		panic(err)
 	}
 
-	info, err:= ioutil.ReadAll(resp.Body)
-	if err!=nil{
+	info, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
 		panic(err)
 	}
 
@@ -73,7 +71,7 @@ func (j *JokeAPI) Fetch() JokesResp{
 
 	jo := []string{}
 
-	if response["type"].(string)=="single"{
+	if response["type"].(string) == "single" {
 		jo = append(jo, response["joke"].(string))
 
 	} else {
@@ -83,56 +81,52 @@ func (j *JokeAPI) Fetch() JokesResp{
 	flagInterface := response["flags"].(map[string]interface{})
 
 	flags := map[string]bool{
-		"nsfw": flagInterface["nsfw"].(bool),
+		"nsfw":      flagInterface["nsfw"].(bool),
 		"religious": flagInterface["religious"].(bool),
-		"racist" : flagInterface["racist"].(bool),
-		"sexist": flagInterface["sexist"].(bool),
+		"racist":    flagInterface["racist"].(bool),
+		"sexist":    flagInterface["sexist"].(bool),
 		"political": flagInterface["political"].(bool),
 	}
 
-	
-
 	return JokesResp{
-		Error : response["error"].(bool),
+		Error:    response["error"].(bool),
 		Category: response["category"].(string),
-		JokeType : response["type"].(string),
-		Joke : jo,
-		Flags : flags,
-		Id : response["id"].(float64),
-		Lang : response["lang"].(string),
+		JokeType: response["type"].(string),
+		Joke:     jo,
+		Flags:    flags,
+		Id:       response["id"].(float64),
+		Lang:     response["lang"].(string),
 	}
-	}
+}
 
 //Sets parameters to JokeAPI struct instance
-func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *string){
-	
+func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *string) {
+
 	j.ExportedParams.Categories = ctgs
 	j.ExportedParams.Blacklist = blacklist
 	j.ExportedParams.JokeType = joketype
-	
+
 }
 
-func (j *JokeAPI) SetCategories(ctgs *[]string){
+func (j *JokeAPI) SetCategories(ctgs *[]string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-func (j *JokeAPI) SetBlacklist(b *[]string){
+func (j *JokeAPI) SetBlacklist(b *[]string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
 
-func (j *JokeAPI) SetJokeType(s *string){
+func (j *JokeAPI) SetJokeType(s *string) {
 
 	j.ExportedParams.JokeType = s
 
 }
 
-
 // Generates instance of JokeAPI struct
-func New() *JokeAPI{
+func New() *JokeAPI {
 	return &JokeAPI{Params{}}
-}	
-
+}

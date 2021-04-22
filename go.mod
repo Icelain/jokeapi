@@ -1,3 +1,3 @@
-module github.com/jokeapi-go
+module github.com/icelain/jokeapi
 
-go 1.15
+go 1.16
