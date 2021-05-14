@@ -7,7 +7,9 @@ import (
 	"strings"
 )
 
-var baseURL string = "https://sv443.net/jokeapi/v2/joke/"
+var (
+        baseURL string = "https://sv443.net/jokeapi/v2/joke/"	
+)
 
 type Params struct {
 	Categories *[]string
@@ -30,11 +32,13 @@ type JokeAPI struct {
 }
 
 func (j *JokeAPI) Fetch() JokesResp {
+	
+	var (
+		response = map[string]interface{}
+		mainURL string
+		isBlacklist bool = false
 
-	var response map[string]interface{}
-
-	var mainURL string = ""
-	var isBlacklist bool = false
+	)
 
 	//param handling begins here
 	if j.ExportedParams.Categories != nil {
