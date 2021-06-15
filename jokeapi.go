@@ -31,7 +31,7 @@ type JokeAPI struct {
 	ExportedParams Params
 }
 
-func (j *JokeAPI) Fetch() JokesResp {
+func (j *JokeAPI) Fetch() JokesResp, error {
 	
 	var (
 		response = map[string]interface{}
@@ -63,12 +63,12 @@ func (j *JokeAPI) Fetch() JokesResp {
 	//param handling ends here
 	resp, err := http.Get(mainURL)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	info, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return err	
 	}
 
 	json.Unmarshal(info, &response)
@@ -100,7 +100,7 @@ func (j *JokeAPI) Fetch() JokesResp {
 		Flags:    flags,
 		Id:       response["id"].(float64),
 		Lang:     response["lang"].(string),
-	}
+	}, nil
 }
 
 //Sets parameters to JokeAPI struct instance
