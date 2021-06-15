@@ -9,7 +9,12 @@ Basic Usage Without Parameters-
 import "github.com/icelain/jokeapi"
 
 func main(){
-  api := jokeapi.New()
+  api, err := jokeapi.New()
+  
+  if err != nil {
+  	panic(err)
+  }
+  
   response := api.Fetch()
 }
 ```
@@ -35,7 +40,12 @@ func main(){
   blacklist := []string{"nsfw"}
   ctgs := []string{"Programming","Dark"}
   
-  api := jokeapi.New()
+  api, err := jokeapi.New()
+  
+  if err != nil {
+  	panic(err)
+  }
+  
   api.SetParams(&ctgs, &blacklist, &jt)
   response := api.Fetch()
 }
