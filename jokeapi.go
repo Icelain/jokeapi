@@ -34,7 +34,7 @@ type JokeAPI struct {
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 	
 	var (
-		response = map[string]interface{}
+		response = map[string]interface{}{}
 		mainURL string
 		isBlacklist bool = false
 
@@ -63,7 +63,7 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	//param handling ends here
 	resp, err := http.Get(mainURL)
 	if err != nil {
-		return err
+		return JokesResp{}, err
 	}
 
 	info, err := ioutil.ReadAll(resp.Body)
