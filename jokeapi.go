@@ -31,7 +31,7 @@ type JokeAPI struct {
 	ExportedParams Params
 }
 
-func (j *JokeAPI) Fetch() JokesResp, error {
+func (j *JokeAPI) Fetch() (JokesResp, error) {
 	
 	var (
 		response = map[string]interface{}
