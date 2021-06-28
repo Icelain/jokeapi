@@ -68,7 +68,7 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 
 	info, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err	
+		return JokesResp{} ,err	
 	}
 
 	json.Unmarshal(info, &response)
