@@ -12,9 +12,9 @@ var (
 )
 
 type Params struct {
-	Categories *[]string
-	Blacklist  *[]string
-	JokeType   *string
+	Categories []string
+	Blacklist  []string
+	JokeType   string
 }
 
 type JokesResp struct {
@@ -36,23 +36,22 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	var (
 		response = map[string]interface{}{}
 		mainURL string
-		isBlacklist bool = false
-
+		isBlacklist bool
 	)
 
 	//param handling begins here
-	if j.ExportedParams.Categories != nil {
+	if len(j.ExportedParams.Categories) > 0 {
 		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories, ",")
 	} else {
 		mainURL = baseURL + "Any"
 	}
 
-	if j.ExportedParams.Blacklist != nil {
+	if len(j.ExportedParams.Blacklist) > 0{
 		isBlacklist = true
 		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist, ",")
 	}
 
-	if j.ExportedParams.JokeType != nil {
+	if j.ExportedParams.JokeType == "" {
 		if isBlacklist {
 			mainURL = mainURL + "&type=" + *j.ExportedParams.JokeType
 		} else {
@@ -104,7 +103,7 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 }
 
 //Sets parameters to JokeAPI struct instance
-func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *string) {
+func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string) {
 
 	j.ExportedParams.Categories = ctgs
 	j.ExportedParams.Blacklist = blacklist
@@ -112,19 +111,19 @@ func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *strin
 
 }
 
-func (j *JokeAPI) SetCategories(ctgs *[]string) {
+func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-func (j *JokeAPI) SetBlacklist(b *[]string) {
+func (j *JokeAPI) SetBlacklist(b []string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
 
-func (j *JokeAPI) SetJokeType(s *string) {
+func (j *JokeAPI) SetJokeType(s string) {
 
 	j.ExportedParams.JokeType = s
 
