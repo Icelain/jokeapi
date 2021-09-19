@@ -7,7 +7,9 @@ import (
 	"strings"
 )
 
-var baseURL string = "https://sv443.net/jokeapi/v2/joke/"
+var (
+        baseURL string = "https://sv443.net/jokeapi/v2/joke/"	
+)
 
 type Params struct {
 	Categories *[]string
@@ -29,12 +31,14 @@ type JokeAPI struct {
 	ExportedParams Params
 }
 
-func (j *JokeAPI) Fetch() JokesResp {
+func (j *JokeAPI) Fetch() (JokesResp, error) {
+	
+	var (
+		response = map[string]interface{}{}
+		mainURL string
+		isBlacklist bool = false
 
-	var response map[string]interface{}
-
-	var mainURL string = ""
-	var isBlacklist bool = false
+	)
 
 	//param handling begins here
 	if j.ExportedParams.Categories != nil {
@@ -59,12 +63,12 @@ func (j *JokeAPI) Fetch() JokesResp {
 	//param handling ends here
 	resp, err := http.Get(mainURL)
 	if err != nil {
-		panic(err)
+		return JokesResp{}, err
 	}
 
 	info, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return JokesResp{} ,err	
 	}
 
 	json.Unmarshal(info, &response)
@@ -96,7 +100,7 @@ func (j *JokeAPI) Fetch() JokesResp {
 		Flags:    flags,
 		Id:       response["id"].(float64),
 		Lang:     response["lang"].(string),
-	}
+	}, nil
 }
 
 //Sets parameters to JokeAPI struct instance
