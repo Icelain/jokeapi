@@ -69,8 +69,6 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		mainURL += "?lang=" + j.ExportedParams.Lang
 		
 	}
-	
-	println(mainURL)
 
 	//param handling ends here
 	resp, err := http.Get(mainURL)
