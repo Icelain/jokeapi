@@ -11,13 +11,8 @@ Basic Usage Without Parameters-
 import "github.com/icelain/jokeapi"
 
 func main(){
-  api, err := jokeapi.New()
-  
-  if err != nil {
-  	panic(err)
-  }
-  
-  response := api.Fetch()
+  api := jokeapi.New()
+  response, err := api.Fetch()
 }
 ```
 Response Struct-
