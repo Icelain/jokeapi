@@ -44,11 +44,11 @@ func main(){
 }
 
 ```
-Usage with config struct-
+Config struct-
 ```go
 api.Set(jokeapi.Params{})
 ```
-Or-
+Functional config -
 ```go
 api.SetBlacklist(blacklist)
 api.SetCategories(ctgs)
