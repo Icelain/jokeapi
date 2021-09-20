@@ -51,7 +51,7 @@ api.Set(jokeapi.Params{})
 Or-
 ```go
 api.SetBlacklist(blacklist)
-api.SetCategory(ctgs)
+api.SetCategories(ctgs)
 api.SetJokeType(joketype)
 api.SetLang(language)
 ```
