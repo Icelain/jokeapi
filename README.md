@@ -42,24 +42,21 @@ func main(){
   blacklist := []string{"nsfw"}
   ctgs := []string{"Programming","Dark"}
   
-  api, err := jokeapi.New()
+  api:= jokeapi.New()
   
-  if err != nil {
-  	panic(err)
-  }
-  
-  api.SetParams(&ctgs, &blacklist, &jt)
-  response := api.Fetch()
+  api.Set(jokeapi.Params{Blacklist: blacklist, JokeType: jt, Categories: ctgs})
+  response, err := api.Fetch()
 }
 
 ```
-Usage without all parameters(requires other params to be declared as nil)-
+Usage with config struct-
 ```go
-api.SetParams(&ctgs,nil, nil)
+api.Set(jokeapi.Params{})
 ```
 Or-
 ```go
-api.SetBlacklist(&blacklist)
-api.SetCategory(&ctgs)
-api.SetType(&joketype)
+api.SetBlacklist(blacklist)
+api.SetCategory(ctgs)
+api.SetJokeType(joketype)
+api.SetLang(language)
 ```
