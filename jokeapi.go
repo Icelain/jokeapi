@@ -56,12 +56,10 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		mainURL = mainURL + "?blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
 	}
 
-	if j.ExportedParams.JokeType == "" {
+	if j.ExportedParams.JokeType != "" {
 		if isBlacklist {
 			mainURL = mainURL + "&type=" + j.ExportedParams.JokeType
-		} else {
-			mainURL = mainURL + "?type=" + j.ExportedParams.JokeType
-		}
+		} 
 	}
 	
 	if j.ExportedParams.Lang != "" {
