@@ -46,21 +46,21 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 
 	//param handling begins here
 	if len(j.ExportedParams.Categories) > 0 {
-		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories, ",")
+		mainURL = baseURL + strings.Join(j.ExportedParams.Categories, ",")
 	} else {
 		mainURL = baseURL + "Any"
 	}
 
 	if len(j.ExportedParams.Blacklist) > 0{
 		isBlacklist = true
-		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist, ",")
+		mainURL = mainURL + "?blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
 	}
 
 	if j.ExportedParams.JokeType == "" {
 		if isBlacklist {
-			mainURL = mainURL + "&type=" + *j.ExportedParams.JokeType
+			mainURL = mainURL + "&type=" + j.ExportedParams.JokeType
 		} else {
-			mainURL = mainURL + "?type=" + *j.ExportedParams.JokeType
+			mainURL = mainURL + "?type=" + j.ExportedParams.JokeType
 		}
 	}
 	
