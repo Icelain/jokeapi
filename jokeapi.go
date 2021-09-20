@@ -11,12 +11,15 @@ var (
         baseURL string = "https://sv443.net/jokeapi/v2/joke/"	
 )
 
+// Parameters to be used by JokeAPI{}.Fetch()
 type Params struct {
-	Categories *[]string
-	Blacklist  *[]string
-	JokeType   *string
+	Categories []string
+	Blacklist  []string
+	JokeType   string
+	Lang string
 }
 
+// Response to be sent by JokeAPI{}.Fetch()
 type JokesResp struct {
 	Error    bool
 	Category string
@@ -27,37 +30,44 @@ type JokesResp struct {
 	Lang     string
 }
 
+// Base JokeAPI struct
 type JokeAPI struct {
 	ExportedParams Params
 }
 
+// Fetches content with respect to the parameters
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 	
 	var (
 		response = map[string]interface{}{}
 		mainURL string
-		isBlacklist bool = false
-
+		isBlacklist bool
 	)
 
 	//param handling begins here
-	if j.ExportedParams.Categories != nil {
-		mainURL = baseURL + strings.Join(*j.ExportedParams.Categories, ",")
+	if len(j.ExportedParams.Categories) > 0 {
+		mainURL = baseURL + strings.Join(j.ExportedParams.Categories, ",")
 	} else {
 		mainURL = baseURL + "Any"
 	}
 
-	if j.ExportedParams.Blacklist != nil {
+	if len(j.ExportedParams.Blacklist) > 0{
 		isBlacklist = true
-		mainURL = mainURL + "?blacklistFlags=" + strings.Join(*j.ExportedParams.Blacklist, ",")
+		mainURL = mainURL + "?blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
 	}
 
-	if j.ExportedParams.JokeType != nil {
+	if j.ExportedParams.JokeType != "" {
 		if isBlacklist {
-			mainURL = mainURL + "&type=" + *j.ExportedParams.JokeType
+			mainURL = mainURL + "&type=" + j.ExportedParams.JokeType
 		} else {
-			mainURL = mainURL + "?type=" + *j.ExportedParams.JokeType
+			mainURL = mainURL + "?type=" + j.ExportedParams.JokeType
 		}
+	}
+	
+	if j.ExportedParams.Lang != "" {
+
+		mainURL += "?lang=" + j.ExportedParams.Lang
+		
 	}
 
 	//param handling ends here
@@ -103,28 +113,43 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	}, nil
 }
 
-//Sets parameters to JokeAPI struct instance
-func (j *JokeAPI) SetParams(ctgs *[]string, blacklist *[]string, joketype *string) {
+//Sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead  
+func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string, lang string) {
 
 	j.ExportedParams.Categories = ctgs
 	j.ExportedParams.Blacklist = blacklist
 	j.ExportedParams.JokeType = joketype
+	j.ExportedParams.Lang = lang
 
 }
 
-func (j *JokeAPI) SetCategories(ctgs *[]string) {
+// Sets custom Params struct
+func (j *JokeAPI) Set(params Params) {
+
+	j.ExportedParams = params
+}
+
+// Sets joke categories
+func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-func (j *JokeAPI) SetBlacklist(b *[]string) {
+// Sets joke blacklist
+func (j *JokeAPI) SetBlacklist(b []string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
+//Sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English).
+func (j *JokeAPI) SetLang(lang string) {
 
-func (j *JokeAPI) SetJokeType(s *string) {
+	j.ExportedParams.Lang = lang
+}
+
+// Sets joke type
+func (j *JokeAPI) SetJokeType(s string) {
 
 	j.ExportedParams.JokeType = s
 
