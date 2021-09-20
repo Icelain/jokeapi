@@ -111,6 +111,11 @@ func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string) 
 
 }
 
+func (j *JokeAPI) Set(params Params) {
+
+	j.ExportedParams = params
+}
+
 func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
