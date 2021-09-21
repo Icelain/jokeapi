@@ -1,6 +1,7 @@
 package jokeapi
 
 import (
+	"errors"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -81,7 +82,11 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		return JokesResp{} ,err	
 	}
 
-	json.Unmarshal(info, &response)
+	if err = json.Unmarshal(info, &response); err != nil {
+		
+		return JokesResp{}, errors.New("no joke found for your configuration")
+		
+	}
 
 	jo := []string{}
 
@@ -142,7 +147,7 @@ func (j *JokeAPI) SetBlacklist(b []string) {
 	j.ExportedParams.Blacklist = b
 
 }
-//Sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English).
+//Sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Most jokes are available in en and de only and setting other languages will give a corresponding error
 func (j *JokeAPI) SetLang(lang string) {
 
 	j.ExportedParams.Lang = lang
