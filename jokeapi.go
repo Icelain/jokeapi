@@ -89,7 +89,13 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	}
 
 	jo := []string{}
-
+	
+	if response["type"] == nil {
+	
+		return JokesResp{}, errors.New("no joke found for your configuration")
+		
+	}
+	
 	if response["type"].(string) == "single" {
 		jo = append(jo, response["joke"].(string))
 
