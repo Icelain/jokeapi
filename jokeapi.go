@@ -36,14 +36,21 @@ type JokeAPI struct {
 	ExportedParams Params
 }
 
+func setSign(sign *string) {
+
+	if *sign=="?" {
+		*sign = "&"
+	}
+}
+
 // Fetches content with respect to the parameters
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 	
 	var (
 		response = map[string]interface{}{}
 		mainURL string
-		isBlacklist bool
-	)
+		sign string = "?"
+ 	)
 
 	//param handling begins here
 	if len(j.ExportedParams.Categories) > 0 {
@@ -53,21 +60,22 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	}
 
 	if len(j.ExportedParams.Blacklist) > 0{
-		isBlacklist = true
-		mainURL = mainURL + "?blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
+		
+		mainURL +=  sign + "blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
+		
+		Setsign(&sign)
 	}
+	
 
 	if j.ExportedParams.JokeType != "" {
-		if isBlacklist {
-			mainURL = mainURL + "&type=" + j.ExportedParams.JokeType
-		} else {
-			mainURL = mainURL + "?type=" + j.ExportedParams.JokeType
-		}
+
+		mainURL +=  sign + "type=" + j.ExportedParams.JokeType
+		Setsign(&sign)
 	}
 	
 	if j.ExportedParams.Lang != "" {
 
-		mainURL += "?lang=" + j.ExportedParams.Lang
+		mainURL += sign + "lang=" + j.ExportedParams.Lang
 		
 	}
 
