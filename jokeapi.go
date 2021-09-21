@@ -63,14 +63,14 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		
 		mainURL +=  sign + "blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
 		
-		Setsign(&sign)
+		setSign(&sign)
 	}
 	
 
 	if j.ExportedParams.JokeType != "" {
 
 		mainURL +=  sign + "type=" + j.ExportedParams.JokeType
-		Setsign(&sign)
+		setSign(&sign)
 	}
 	
 	if j.ExportedParams.Lang != "" {
