@@ -9,7 +9,7 @@ import (
 )
 
 var (
-        baseURL string = "https://sv443.net/jokeapi/v2/joke/"	
+        baseURL string = "https://v2.jokeapi.dev/"	
 )
 
 // Parameters to be used by JokeAPI{}.Fetch()
