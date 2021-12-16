@@ -45,9 +45,7 @@ type JokesResp struct {
 
 // Base JokeAPI struct
 type JokeAPI struct {
-	
 	ExportedParams Params
-	
 }
 
 func setSign(sign *string) {
