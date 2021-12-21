@@ -4,6 +4,13 @@ import (
 	"testing"
 )
 
+const (
+	WRONG_BLACKLIST = "blacklist not set properly"
+	WRONG_LANG      = "language not set properly"
+	WRONG_TYPE      = "joke type not set properly"
+	WRONG_CATEGORY  = "category not set properly"
+)
+
 func Test_Fetch_Parts(t *testing.T) {
 
 	api := New()
@@ -14,6 +21,7 @@ func Test_Fetch_Parts(t *testing.T) {
 		t.Fatal(err)
 
 	}
+
 	if len(resp.Joke) == 1 {
 
 		if !(resp.JokeType == "single" && resp.Joke[0] != "") {
@@ -32,7 +40,7 @@ func Test_Fetch_Parts(t *testing.T) {
 	}
 }
 
-func Test_Fetch_SetAll(t *testing.T) {
+func Test_Fetch_Set_Lang_and_Blacklist(t *testing.T) {
 
 	api := New()
 	api.SetBlacklist([]string{"nsfw"})
@@ -48,13 +56,95 @@ func Test_Fetch_SetAll(t *testing.T) {
 
 	if resp.Flags["nsfw"] {
 
-		t.Error("blacklist flag not set properly")
+		t.Error(WRONG_BLACKLIST)
 
 	}
 
 	if resp.Lang != "de" {
 
-		t.Error("language flag not set properly")
+		t.Error(WRONG_LANG)
 
 	}
+
+}
+
+func Test_Fetch_Type(t *testing.T) {
+
+	api := New()
+	api.SetCategories([]string{"Programming"})
+
+	resp, err := api.Fetch()
+
+	if err != nil {
+
+		t.Error(err)
+
+	}
+
+	if resp.Category != "Programming" {
+
+		t.Error(WRONG_CATEGORY)
+
+	}
+
+}
+
+func Test_Fetch_Set_All(t *testing.T) {
+
+	api := New()
+	api.SetParams([]string{"Programming"}, []string{"nsfw"}, "twopart", "en")
+
+	resp, err := api.Fetch()
+
+	if err != nil {
+
+		t.Error(err)
+
+	}
+
+	if resp.JokeType != "twopart" {
+
+		t.Error(WRONG_TYPE)
+
+	}
+
+	if resp.Flags["nsfw"] {
+
+		t.Error(WRONG_BLACKLIST)
+
+	}
+
+	if resp.Category != "Programming" {
+
+		t.Error(WRONG_CATEGORY)
+
+	}
+
+	if resp.Lang != "en" {
+
+		t.Error(WRONG_LANG)
+
+	}
+
+}
+
+func Test_Fetch_Params(t *testing.T) {
+
+	api := New()
+	api.Set(Params{Categories: []string{"Programming"}, Blacklist: []string{"nsfw"}, JokeType: "single"})
+
+	resp, err := api.Fetch()
+
+	if err != nil {
+
+		t.Error(err)
+
+	}
+
+	if resp.Category != "Programming" {
+
+		t.Error()
+
+	}
+
 }
