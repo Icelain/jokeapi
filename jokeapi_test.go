@@ -14,7 +14,6 @@ func Test_Fetch_Parts(t *testing.T) {
 		t.Fatal(err)
 
 	}
-
 	if len(resp.Joke) == 1 {
 
 		if !(resp.JokeType == "single" && resp.Joke[0] != "") {
@@ -58,5 +57,4 @@ func Test_Fetch_SetAll(t *testing.T) {
 		t.Error("language flag not set properly")
 
 	}
-
 }
