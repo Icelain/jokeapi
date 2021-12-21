@@ -150,21 +150,21 @@ func (j *JokeAPI) Set(params Params) {
 	j.ExportedParams = params
 }
 
-//SetCategories sets joke categories
+//SetCategories sets joke categories. Common categories are Programming | Misc | Spooky | Dark | Fun
 func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-//SetBlacklist sets joke blacklist
+//SetBlacklist sets joke blacklist. Common blacklists are nsfw | religious | political | racist | sexist | explicit
 func (j *JokeAPI) SetBlacklist(b []string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
 
-//SetLang sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Most jokes are available in en and de only and setting other languages will give a corresponding error
+//SetLang sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Note that (as of now) most jokes are available in en and de only and setting other languages will give a corresponding error
 func (j *JokeAPI) SetLang(lang string) {
 
 	j.ExportedParams.Lang = lang
