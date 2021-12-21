@@ -1,8 +1,9 @@
 # jokeapi-go
-Official golang wrapper for Sv443's jokeapi.
 
  [![GoDoc](https://godoc.org/github.com/icelain?status.png)](https://godoc.org/github.com/icelain/jokeapi)
  [![Go Report Card](https://goreportcard.com/badge/github.com/icelain/jokeapi)](https://goreportcard.com/report/github.com/icelain/jokeapi)
+
+Official golang wrapper for Sv443's jokeapi.
 
 Install-
 ```go get -u github.com/icelain/jokeapi```
