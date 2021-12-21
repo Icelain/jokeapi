@@ -12,7 +12,7 @@ var (
 	baseURL string = "https://v2.jokeapi.dev/joke/"
 )
 
-type JokeConsumer struct {
+type jokeConsumer struct {
 	Error    bool            `json:"error"`
 	Category string          `json:"category"`
 	Type     string          `json:"type"`
@@ -24,7 +24,7 @@ type JokeConsumer struct {
 	Delivery string          `json:"delivery"`
 }
 
-// Parameters to be used by JokeAPI{}.Fetch()
+//Params is the config struct be used by JokeAPI{}.Fetch()
 type Params struct {
 	Categories []string
 	Blacklist  []string
@@ -32,7 +32,7 @@ type Params struct {
 	Lang       string
 }
 
-// Response to be sent by JokeAPI{}.Fetch()
+//JokesResp is the response to be sent by JokeAPI{}.Fetch()
 type JokesResp struct {
 	Error    bool
 	Category string
@@ -43,7 +43,7 @@ type JokesResp struct {
 	Lang     string
 }
 
-// Base JokeAPI struct
+//JokeAPI struct
 type JokeAPI struct {
 	ExportedParams Params
 }
@@ -55,12 +55,12 @@ func setSign(sign *string) {
 	}
 }
 
-// Fetches content with respect to the parameters
+//Fetch gets the content with respect to the parameters
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 
 	var (
 		//response = map[string]interface{}{}
-		jokeConsumer JokeConsumer
+		jokeConsumer jokeConsumer
 		mainURL      string
 		sign         string = "?"
 	)
@@ -134,7 +134,7 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	}, nil
 }
 
-//Sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead
+//SetParams sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead
 func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string, lang string) {
 
 	j.ExportedParams.Categories = ctgs
@@ -144,40 +144,40 @@ func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string, 
 
 }
 
-// Sets custom Params struct
+//Set sets custom Params struct
 func (j *JokeAPI) Set(params Params) {
 
 	j.ExportedParams = params
 }
 
-// Sets joke categories
+//SetCategories sets joke categories
 func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-// Sets joke blacklist
+//SetBlacklist sets joke blacklist
 func (j *JokeAPI) SetBlacklist(b []string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
 
-//Sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Most jokes are available in en and de only and setting other languages will give a corresponding error
+//SetLang sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Most jokes are available in en and de only and setting other languages will give a corresponding error
 func (j *JokeAPI) SetLang(lang string) {
 
 	j.ExportedParams.Lang = lang
 }
 
-// Sets joke type
+//SetJokeType sets joke type
 func (j *JokeAPI) SetJokeType(s string) {
 
 	j.ExportedParams.JokeType = s
 
 }
 
-// Generates instance of JokeAPI struct
+//New Generates instance of JokeAPI struct
 func New() *JokeAPI {
 	return &JokeAPI{Params{}}
 }
