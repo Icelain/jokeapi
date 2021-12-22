@@ -77,7 +77,7 @@ func Test_Fetch_Type(t *testing.T) {
 
 	if err != nil {
 
-		t.Error(err)
+		t.Fatal(err)
 
 	}
 
@@ -98,7 +98,7 @@ func Test_Fetch_Set_All(t *testing.T) {
 
 	if err != nil {
 
-		t.Error(err)
+		t.Fatal(err)
 
 	}
 
@@ -137,7 +137,7 @@ func Test_Fetch_Params(t *testing.T) {
 
 	if err != nil {
 
-		t.Error(err)
+		t.Fatal(err)
 
 	}
 
