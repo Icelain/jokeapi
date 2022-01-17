@@ -40,11 +40,12 @@ func Test_Fetch_Parts(t *testing.T) {
 	}
 }
 
-func Test_Fetch_Set_Lang_and_Blacklist(t *testing.T) {
+func Test_Fetch_Set_Functional(t *testing.T) {
 
 	api := New()
 	api.SetBlacklist([]string{"nsfw"})
 	api.SetLang("de")
+	api.SetJokeType("twopart")
 
 	resp, err := api.Fetch()
 
@@ -63,6 +64,12 @@ func Test_Fetch_Set_Lang_and_Blacklist(t *testing.T) {
 	if resp.Lang != "de" {
 
 		t.Error(WRONG_LANG)
+
+	}
+
+	if resp.JokeType != "twopart" {
+
+		t.Error(WRONG_TYPE)
 
 	}
 
