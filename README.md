@@ -8,7 +8,11 @@
 Official golang wrapper for Sv443's jokeapi.
 
 Install-
-```go get -u github.com/icelain/jokeapi```
+Add ```github.com/icelain/jokeapi```to your go.mod(recommended) or:
+```
+EXPORT GO11MODULE=off
+go get -u github.com/icelain/jokeapi
+```
 
 Basic Usage Without Parameters-
 ```go
