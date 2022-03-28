@@ -55,6 +55,12 @@ func setSign(sign *string) {
 	}
 }
 
+func contextifyError(context string, err error) error {
+
+	return errors.New(context + ": " + err.Error())
+
+}
+
 //Fetch gets the content with respect to the parameters
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 
@@ -94,12 +100,12 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	//param handling ends here
 	resp, err := http.Get(mainURL)
 	if err != nil {
-		return JokesResp{}, err
+		return JokesResp{}, contextifyError("Request failed", err)
 	}
 
 	info, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return JokesResp{}, err
+		return JokesResp{}, contextifyError("Failed to decode request response", err)
 	}
 
 	if err = json.Unmarshal(info, &jokeConsumer); err != nil {
