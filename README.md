@@ -56,7 +56,7 @@ Config struct-
 ```go
 api.Set(jokeapi.Params{})
 ```
-Functional config -
+ Config methods-
 ```go
 api.SetBlacklist(blacklist)
 api.SetCategories(ctgs)
