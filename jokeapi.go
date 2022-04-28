@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var (
+const (
 	baseURL string = "https://v2.jokeapi.dev/joke/"
 )
 
