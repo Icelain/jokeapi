@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -48,13 +49,6 @@ type JokeAPI struct {
 	ExportedParams Params
 }
 
-func setSign(sign *string) {
-
-	if *sign == "?" {
-		*sign = "&"
-	}
-}
-
 func contextifyError(context string, err error) error {
 
 	return errors.New(context + ": " + err.Error())
@@ -68,8 +62,10 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		//response = map[string]interface{}{}
 		jokeConsumer jokeConsumer
 		mainURL      string
-		sign         string = "?"
+		reqUrl *url.URL
+		err error
 	)
+	
 
 	//param handling begins here
 	if len(j.ExportedParams.Categories) > 0 {
@@ -77,28 +73,26 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	} else {
 		mainURL = baseURL + "Any"
 	}
-
-	if len(j.ExportedParams.Blacklist) > 0 {
-
-		mainURL += sign + "blacklistFlags=" + strings.Join(j.ExportedParams.Blacklist, ",")
-
-		setSign(&sign)
-	}
-
-	if j.ExportedParams.JokeType != "" {
-
-		mainURL += sign + "type=" + j.ExportedParams.JokeType
-		setSign(&sign)
-	}
-
-	if j.ExportedParams.Lang != "" {
-
-		mainURL += sign + "lang=" + j.ExportedParams.Lang
+	
+	reqUrl, err = url.Parse(mainURL)
+	if err != nil {
+		
+		if err != nil {
+			return JokesResp{}, contextifyError("Request failed as url could not be generated", err)
+		}
 
 	}
+	
+	query := reqUrl.Query()
+
+	query.Set("blacklistFlags", strings.Join(j.ExportedParams.Blacklist, ","))
+	query.Set("type", j.ExportedParams.JokeType)
+	query.Set("lang", j.ExportedParams.Lang)
+	
+	reqUrl.RawQuery = query.Encode()
 
 	//param handling ends here
-	resp, err := http.Get(mainURL)
+	resp, err := http.Get(reqUrl.String())
 	if err != nil {
 		return JokesResp{}, contextifyError("Request failed", err)
 	}
