@@ -3,7 +3,8 @@ package jokeapi
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -25,7 +26,7 @@ type jokeConsumer struct {
 	Delivery string          `json:"delivery"`
 }
 
-//Params is the config struct be used by JokeAPI{}.Fetch()
+// Params is the config struct be used by JokeAPI{}.Fetch()
 type Params struct {
 	Categories []string
 	Blacklist  []string
@@ -33,7 +34,7 @@ type Params struct {
 	Lang       string
 }
 
-//JokesResp is the response to be sent by JokeAPI{}.Fetch()
+// JokesResp is the response to be sent by JokeAPI{}.Fetch()
 type JokesResp struct {
 	Error    bool
 	Category string
@@ -44,28 +45,25 @@ type JokesResp struct {
 	Lang     string
 }
 
-//JokeAPI struct
+// JokeAPI struct
 type JokeAPI struct {
 	ExportedParams Params
 }
 
 func contextifyError(context string, err error) error {
-
-	return errors.New(context + ": " + err.Error())
-
+	return fmt.Errorf("%s: %w", context, err)
 }
 
-//Fetch gets the content with respect to the parameters
+// Fetch gets the content with respect to the parameters
 func (j *JokeAPI) Fetch() (JokesResp, error) {
 
 	var (
 		//response = map[string]interface{}{}
 		jokeConsumer jokeConsumer
 		mainURL      string
-		reqUrl *url.URL
-		err error
+		reqUrl       *url.URL
+		err          error
 	)
-	
 
 	//param handling begins here
 	if len(j.ExportedParams.Categories) > 0 {
@@ -73,22 +71,22 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	} else {
 		mainURL = baseURL + "Any"
 	}
-	
+
 	reqUrl, err = url.Parse(mainURL)
 	if err != nil {
-		
+
 		if err != nil {
 			return JokesResp{}, contextifyError("Request failed as url could not be generated", err)
 		}
 
 	}
-	
+
 	query := reqUrl.Query()
 
 	query.Set("blacklistFlags", strings.Join(j.ExportedParams.Blacklist, ","))
 	query.Set("type", j.ExportedParams.JokeType)
 	query.Set("lang", j.ExportedParams.Lang)
-	
+
 	reqUrl.RawQuery = query.Encode()
 
 	//param handling ends here
@@ -97,14 +95,14 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		return JokesResp{}, contextifyError("Request failed", err)
 	}
 
-	info, err := ioutil.ReadAll(resp.Body)
+	info, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return JokesResp{}, contextifyError("Failed to decode request response", err)
 	}
 
 	if err = json.Unmarshal(info, &jokeConsumer); err != nil {
 
-		return JokesResp{}, errors.New("no joke found for your configuration: ")
+		return JokesResp{}, contextifyError("no joke found for your configuration", err)
 
 	}
 
@@ -134,7 +132,7 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 	}, nil
 }
 
-//SetParams sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead
+// SetParams sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead
 func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string, lang string) {
 
 	j.ExportedParams.Categories = ctgs
@@ -144,40 +142,40 @@ func (j *JokeAPI) SetParams(ctgs []string, blacklist []string, joketype string, 
 
 }
 
-//Set sets custom Params struct
+// Set sets custom Params struct
 func (j *JokeAPI) Set(params Params) {
 
 	j.ExportedParams = params
 }
 
-//SetCategories sets joke categories. Common categories are Programming | Misc | Spooky | Dark | Fun
+// SetCategories sets joke categories. Common categories are Programming | Misc | Spooky | Dark | Fun
 func (j *JokeAPI) SetCategories(ctgs []string) {
 
 	j.ExportedParams.Categories = ctgs
 
 }
 
-//SetBlacklist sets joke blacklist. Common blacklists are nsfw | religious | political | racist | sexist | explicit
+// SetBlacklist sets joke blacklist. Common blacklists are nsfw | religious | political | racist | sexist | explicit
 func (j *JokeAPI) SetBlacklist(b []string) {
 
 	j.ExportedParams.Blacklist = b
 
 }
 
-//SetLang sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Note that (as of now) most jokes are available in en and de only and setting other languages will give a corresponding error
+// SetLang sets language. Go to https://v2.jokeapi.dev/languages?format=txt to select your preferable language format. By default its en (English). Note that (as of now) most jokes are available in en and de only and setting other languages will give a corresponding error
 func (j *JokeAPI) SetLang(lang string) {
 
 	j.ExportedParams.Lang = lang
 }
 
-//SetJokeType sets joke type
+// SetJokeType sets joke type
 func (j *JokeAPI) SetJokeType(s string) {
 
 	j.ExportedParams.JokeType = s
 
 }
 
-//New Generates instance of JokeAPI struct
+// New Generates instance of JokeAPI struct
 func New() *JokeAPI {
 	return &JokeAPI{Params{}}
 }
