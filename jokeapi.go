@@ -55,7 +55,7 @@ func contextifyError(context string, err error) error {
 	return fmt.Errorf("%s: %w", context, err)
 }
 
-// FetchWithContext gets the content with respect to the parameters. Accepts custom context from user.
+// FetchWithContext gets the content with respect to the parameters. Accepts a context.Context.
 func (j *JokeAPI) FetchWithContext(ctx context.Context) (JokesResp, error) {
 
 	var (
