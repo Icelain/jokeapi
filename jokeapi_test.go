@@ -1,6 +1,7 @@
 package jokeapi
 
 import (
+	"context"
 	"testing"
 )
 
@@ -10,6 +11,18 @@ const (
 	WRONG_TYPE      = "joke type not set properly"
 	WRONG_CATEGORY  = "category not set properly"
 )
+
+func Test_Fetch_Context(t *testing.T) {
+
+	api := New()
+	_, err := api.FetchWithContext(context.Background())
+
+	if err != nil {
+
+		t.Fatal(err)
+
+	}
+}
 
 func Test_Fetch_Parts(t *testing.T) {
 

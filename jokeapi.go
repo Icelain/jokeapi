@@ -1,6 +1,7 @@
 package jokeapi
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -54,8 +55,8 @@ func contextifyError(context string, err error) error {
 	return fmt.Errorf("%s: %w", context, err)
 }
 
-// Fetch gets the content with respect to the parameters
-func (j *JokeAPI) Fetch() (JokesResp, error) {
+// FetchWithContext gets the content with respect to the parameters. Accepts a context.Context.
+func (j *JokeAPI) FetchWithContext(ctx context.Context) (JokesResp, error) {
 
 	var (
 		//response = map[string]interface{}{}
@@ -89,8 +90,20 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 
 	reqUrl.RawQuery = query.Encode()
 
-	//param handling ends here
-	resp, err := http.Get(reqUrl.String())
+	// param handling ends here
+	
+	// create client
+	client := &http.Client{}
+	
+	// create request
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqUrl.String(), nil)
+	if err != nil {
+
+		return JokesResp{}, err
+
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return JokesResp{}, contextifyError("Request failed", err)
 	}
@@ -130,6 +143,13 @@ func (j *JokeAPI) Fetch() (JokesResp, error) {
 		Id:       jokeConsumer.ID,
 		Lang:     jokeConsumer.Lang,
 	}, nil
+}
+
+// Fetch gets the content with respect to the parameters. Use FetchWithContext to add your custom context.
+func (j *JokeAPI) Fetch() (JokesResp, error) {
+
+	return j.FetchWithContext(context.TODO())
+
 }
 
 // SetParams sets parameters to JokeAPI struct instance. This method only exists because I don't want to make breaking changes to the existing api by removing it. I would recommend using Jokeapi{}.Set() or the singular methods instead
